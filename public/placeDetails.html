@@ -1,0 +1,208 @@
+<div class="row py-2 text-center" ng-if="specificPlace.data!=null">
+    <h3 style="margin: auto;">{{specificPlace.data.name}}</h3>
+</div>
+<div class="row py-1">
+    <div class="col-4 text-left">
+        <button type="button" class="btn btn-outline-secondary black" ng-click="returnList()">
+            <i class="fas fa-chevron-left"></i> List
+        </button>
+    </div>
+    <div class="col-8 text-right">
+        <button type="button" class="btn btn-outline-secondary" ng-click="store(specificPlace.data)" ng-disabled="specificPlace.data==null">
+            <i ng-class="checkFavIcon(specificPlace.data)"></i>
+        </button>
+        <a ng-disabled="specificPlace.data==null" ng-href="{{getTweetUrl()}}">
+        	<img src="http://cs-server.usc.edu:45678/hw/hw8/images/Twitter.png" width="44" height="38">
+        </a>
+    </div>
+</div>
+<div class="row py-1" ng-if="specificPlace.data!=null">
+    <div class="col-12">
+        <ul class="nav nav-tabs justify-content-end" style="width:100%;">
+            <li class="nav-item">
+                <a class="nav-link" ng-class="{active: specificPlace.info}" href="#info" ng-click="detailsTab('info')">Info</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" ng-class="{active: specificPlace.photos}" href="#photos" ng-click="detailsTab('photos')">Photos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" ng-class="{active: specificPlace.map}" href="#map" ng-click="detailsTab('map')">Map</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" ng-class="{active: specificPlace.reviews}" href="#reviews" ng-click="detailsTab('reviews')">Reviews</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="row py-1" ng-if="specificPlace.info" id="info">
+    <table class="table table-striped">
+        <tbody>
+            <tr ng-if="specificPlace.data.hasOwnProperty('formatted_address')">
+                <th scope="row">Address</th>
+                <td>{{specificPlace.data.formatted_address}}</td>
+            </tr>
+            <tr ng-if="specificPlace.data.hasOwnProperty('international_phone_number')">
+                <th scope="row">Phone Number</th>
+                <td>{{specificPlace.data.international_phone_number}}</td>
+            </tr>
+            <tr ng-if="specificPlace.data.hasOwnProperty('price_level')">
+                <th scope="row">Price Level</th>
+                <td>
+                	<span ng-repeat="i in getArrayCollection(specificPlace.data.price_level) track by $index">$</span>
+                </td>
+            </tr>
+            <tr ng-if="specificPlace.data.hasOwnProperty('rating')">
+                <th scope="row">Rating</th>
+                <td>
+                    {{specificPlace.data.rating}}
+                    <div class="star-ratings-css">
+                        <div ng-repeat="i in getArrayCollection(specificPlace.data.rating) track by $index" ng-style="getWidth($index+1, specificPlace.data.rating)">★</div>
+                    </div>
+                </td>
+            </tr>
+            <tr ng-if="specificPlace.data.hasOwnProperty('url')">
+                <th scope="row">Google Page</th>
+                <td><a href="{{specificPlace.data.url}}" target="_blank">{{specificPlace.data.url}}</a></td>
+            </tr>
+            <tr ng-if="specificPlace.data.hasOwnProperty('website')">
+                <th scope="row">Website</th>
+                <td><a href="{{specificPlace.data.website}}" target="_blank">{{specificPlace.data.website}}</a></td>
+            </tr>
+            <tr ng-if="specificPlace.data.hasOwnProperty('opening_hours')">
+                <th scope="row">Hours</th>
+                <td>{{specificPlace.data.opening_hours.open_now?'Open Now:' + getTodayHours(specificPlace.data):'Closed'}} <a data-toggle="modal" data-target="#dailyOpenHours" href="#">Daily open hours</a></td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Modal -->
+    <div class="modal fade" id="dailyOpenHours" tabindex="-1" role="dialog" aria-labelledby="dailyOpenHours" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dailyOpenHoursTitle">Open hours</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tbody>
+                            <tr ng-repeat="text in specificPlace.data.opening_hours.weekday_text track by $index">
+                                <th ng-if="$index==getWeekDayIndex(specificPlace.data.utc_offset)">{{text.slice(0, text.indexOf(":"))}}</th>
+                                <th ng-if="$index==getWeekDayIndex(specificPlace.data.utc_offset)">{{text.slice(text.indexOf(":") + 1)}}</th>
+                                <td ng-if="$index!=getWeekDayIndex(specificPlace.data.utc_offset)">{{text.slice(0, text.indexOf(":"))}}</td>
+                                <td ng-if="$index!=getWeekDayIndex(specificPlace.data.utc_offset)">{{text.slice(text.indexOf(":") + 1)}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row my-2" ng-if="specificPlace.photos" id="photos" style="margin-right:0px; margin-left:0px;">
+    <div class="col-lg-3 col-12 px-1">
+        <div class="card p-1 my-1" style="width: 100%;" ng-repeat="imgObject in specificPlace.data.photos | filter: renderPhoto(0) track by $index">
+            <a target="_blank" ng-href="{{getSRC(imgObject)}}"><img ng-src="{{getSRC(imgObject)}}" style="max-width: 100%; height: auto;"></a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-12 px-1">
+        <div class="card p-1 my-1" style="width: 100%;" ng-repeat="imgObject in specificPlace.data.photos | filter: renderPhoto(1) track by $index">
+            <a target="_blank" ng-href="{{getSRC(imgObject)}}"><img ng-src="{{getSRC(imgObject)}}" style="max-width: 100%; height: auto;"></a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-12 px-1">
+        <div class="card p-1 my-1" style="width: 100%;" ng-repeat="imgObject in specificPlace.data.photos | filter: renderPhoto(2) track by $index">
+            <a target="_blank" ng-href="{{getSRC(imgObject)}}"><img ng-src="{{getSRC(imgObject)}}" style="max-width: 100%; height: auto;"></a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-12 px-1">
+        <div class="card p-1 my-1" style="width: 100%;" ng-repeat="imgObject in specificPlace.data.photos | filter: renderPhoto(3) track by $index">
+            <a target="_blank" ng-href="{{getSRC(imgObject)}}"><img ng-src="{{getSRC(imgObject)}}" style="max-width: 100%; height: auto;"></a>
+        </div>
+    </div>
+</div>
+<div class="row py-1" ng-show="specificPlace.map" id="mapContainer">
+    <div class="col-sm-12 col-lg-4 form-group">
+        From
+        <br>
+        <input type="text" class="form-control" ng-model="maps.from" id="mapInput">
+    </div>
+    <div class="col-sm-12 col-lg-4 form-group">
+        To
+        <br>
+        <input type="text" ng-model="maps.to" class="form-control" disabled>
+    </div>
+    <div class="col-sm-12 col-lg-2 form-group">
+        Travel Mode
+        <br>
+        <select id="mode" size=1 ng-model="maps.mode" class="form-control">
+            <option value="DRIVING">Driving</option>
+            <option value="BICYCLING">Bicycling</option>
+            <option value="TRANSIT">Transit</option>
+            <option value="WALKING">Walking</option>
+        </select>
+    </div>
+    <div class="col-sm-12 col-lg-2 form-group">
+        <br>
+        <button type="button" class="btn btn-primary" ng-click="getDirections()">
+            Get Directions
+        </button>
+    </div>
+    <div class="col-sm-12 mb-2">
+        <button type="button" class="btn px-1" style="background-color: #fff; border-color: #ccc;" ng-click="changeMapView()">
+            <img ng-src="{{viewType()}}" style="max-width: 35px;">
+        </button>
+    </div>
+    <div class="col-sm-12">
+        <div id="map" style="position: relative !important; height: 300px; width: 100%;"></div>
+    </div>
+    <div class="col-sm-12">
+    	<div id="directionInstructions"></div>
+    </div>
+</div>
+<div class="row py-1" ng-show="specificPlace.reviews" id="reviews">
+    <div class="col-12 pb-2">
+        <select id="reviewsType" size=1 class="form-control btn-secondary" ng-model="reviews.reviewsType" style="width: 160px; display: inline-block;" ng-change="changeReviews()">
+            <option value="google">Google Reviews</option>
+            <option value="yelp">Yelp Reviews</option>
+        </select>
+        <select id="reviewsOrder" size=1 class="form-control btn-secondary" ng-model="reviews.reviewsOrder" style="width: 150px; display: inline-block;">
+            <option value="default">Default Order</option>
+            <option value="highest">Highest Rating</option>
+            <option value="lowest">Lowest Rating</option>
+            <option value="most">Most Recent</option>
+            <option value="least">Least Recent</option>
+        </select>
+    </div>
+    <div class="col-12">
+        <div class="card my-1 review" ng-repeat="review in reviews.data[reviews.reviewsType] | orderBy: getOrder: (reviews.reviewsOrder=='highest' || reviews.reviewsOrder=='most') track by $index">
+            <div class="card-body row">
+                <div class="col-2 col-md-1">
+                	<a ng-href="{{review.author_url}}" target="_blank">
+                    	<img ng-src={{review.profile_photo_url}} style="max-width:100%; border-radius: 50%;">
+                    </a>
+                </div>
+                <div class="col-10 col-md-11">
+                    <div>
+                        <a ng-href="{{review.author_url}}" target="_blank">{{review.author_name}}</a>
+                    </div>
+                    <div>
+                        <div class="star-ratings-css" style="margin-right: 4px; position: relative; display: inline-block;">
+                            <div ng-repeat="i in getArrayCollection(review.rating) track by $index" ng-style="getWidth($index+1, review.rating)">★</div>
+                        </div>
+                        <div style="position: absolute; display: inline;">
+                            {{getFormattedTime(review.time)}}
+                        </div>
+                    </div>
+                    <div>
+                        {{review.text}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

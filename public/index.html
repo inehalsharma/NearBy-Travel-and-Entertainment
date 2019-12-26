@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Travel and Entertaiment Search</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+
+<body ng-app="myApp" ng-controller="myCtrl">
+    <div class="container">
+        <div class="row justify-content-center py-3 mb-4">
+            <div class="col-xl-11 col-lg-11 col-md-12 col-sm-12 col-12">
+                <div class="card" style="background-color: #fafafa;">
+                    <h3 class="card-title text-center mt-3">Travel and Entertainment Search</h3>
+                    <div class="card-body row justify-content-center">
+                        <form class="col-xl-9 col-lg-10 col-md-12">
+                            <div class="form-group row required">
+                                <label for="keyword" class="col-sm-3 col-form-label control-label">Keyword</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="keyword" ng-model="data.keyword" required ng-class="{errorInput: data.keywordError}" ng-blur="validate(1)">
+                                    <div ng-show="data.keywordError" class="errorText">Please enter a keyword</div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="category" class="col-sm-3 col-form-label">Category</label>
+                                <div class="col-sm-8">
+                                    <select id="category" size=1 name="category" class="form-control" ng-model="data.category">
+                                        <option value="default">Default</option>
+                                        <option value="airport">Airport</option>
+                                        <option value="amusement_park">Amusement Park</option>
+                                        <option value="aquarium">Aquarium</option>
+                                        <option value="art_gallery">Art Gallery</option>
+                                        <option value="bakery">Bakery</option>
+                                        <option value="bar">bar</option>
+                                        <option value="beauty_salon">Beauty Salon</option>
+                                        <option value="bowling_alley">Bowling Alley</option>
+                                        <option value="bus_station">Bus Station</option>
+                                        <option value="cafe">Cafe</option>
+                                        <option value="campground">Campground</option>
+                                        <option value="casino">Casino</option>
+                                        <option value="lodging">Lodging</option>
+                                        <option value="movie_theater">Movie Theater</option>
+                                        <option value="museum">Museum</option>
+                                        <option value="night_club">Night Club</option>
+                                        <option value="park">Park</option>
+                                        <option value="parking">Parking</option>
+                                        <option value="restaurant">Resturant</option>
+                                        <option value="shopping_mall">Shopping Mall</option>
+                                        <option value="stadium">Stadium</option>
+                                        <option value="subway_station">Subway Station</option>
+                                        <option value="taxi_stand">Taxi Stand</option>
+                                        <option value="train_station">Train Station</option>
+                                        <option value="transit_station">Transit Station</option>
+                                        <option value="travel_agency">Travel Agency</option>
+                                        <option value="zoo">Zoo</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="distance" class="col-sm-3 col-form-label">Distance (miles)</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="distance" name="distance" ng-model="data.distance" placeholder="10">
+                                </div>
+                            </div>
+                            <div class="form-group row required">
+                                <label for="keyword" class="col-sm-3 col-form-label control-label">From</label>
+                                <div class="col-sm-9">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="current" name="location" value="current" ng-model="data.location" ng-change="locationTrigger();">
+                                        <label class="form-check-label" for="current">Current location</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="other" name="location" value="other" ng-model="data.location">
+                                        <label class="form-check-label" for="other">Other. Please Specify:</label>
+                                        <br/>
+                                        <input type="text" class="form-control" id="otherLocation" name="other" ng-disabled="data.location!='other'" ng-model="data.customLocation" ng-blur="validate(2)">
+                                        <div ng-show="data.otherLocationError" class="errorText">Please enter a location</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-6">
+                                    <button type="button" class="btn btn-primary" ng-disabled="data.keyword.trim().length==0 || (data.location=='current' && data.currentLocation==null) || (data.location=='other' && data.customLocation.trim().length==0)" ng-click="search()">
+                                        <i class="fas fa-search" style="color: #fff;"></i> Search
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" ng-click="reset()">Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 pt-4 text-center">
+                <button type="button" class="btn" ng-class="{'btn-primary': flags.tabType==1, 'btn-link': flags.tabType==2}" style="text-decoration: none !important;" ng-click="tabChange(1)">
+                    Results
+                </button>
+                <button type="button" class="btn" ng-class="{'btn-primary': flags.tabType==2, 'btn-link': flags.tabType==1}" style="text-decoration: none !important;" ng-click="tabChange(2)">
+                    Favorites
+                </button>
+            </div>
+            <div class="col-12 pt-4 pb-4 text-center" ng-show="flags.loadBarVisible">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width:{{flags.loaderBarProgress}}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 pt-4 slideRightToLeft" ng-show="codePortionFlags.placeResultsVisible">
+                <result-table></result-table>
+            </div>
+            <div class="col-12 pb-4 mt-4 slideLeftToRight" ng-show="codePortionFlags.specificPlaceDetails">
+                <place-details></place-details>
+            </div>
+            <div class="col-12" ng-show="flags.noRecords" ng-class="{'my-4': flags.noRecords, 'fadeIn': specificPlace.reviews && codePortionFlags.specificPlaceDetails}">
+                <div class="alert alert-warning" style="width: 100%;">
+                No records.
+                </div>
+            </div>
+            <div class="col-12" ng-show="flags.error" ng-class="{'my-4': flags.error, 'fadeIn': specificPlace.reviews && codePortionFlags.specificPlaceDetails}">
+                <div class="alert alert-danger" style="width: 100%;">
+                Failed to get search results.
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" async src="https://platform.twitter.com/widgets.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-animate.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=map_key&libraries=places&callback=initMap" async defer></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment.js"></script>
+</body>
+
+</html>

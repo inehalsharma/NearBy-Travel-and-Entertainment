@@ -1,0 +1,80 @@
+.form-group.required .control-label:after {
+    content: "*";
+    color: red;
+}
+
+.errorText {
+    color: red;
+}
+
+.errorInput {
+    border-color: red;
+}
+
+.star-ratings-css {
+    unicode-bidi: bidi-override;
+    color: #e7711b;
+    font-size: 16px;
+    display: inline-block;
+    padding: 0;
+    text-shadow: 0px 1px 0 #a2a2a2;
+    overflow: hidden;
+    position: absolute;
+}
+
+.star-ratings-css > div {
+	display: inline-block;
+}
+
+.yellow {
+	color: #fdd444;
+}
+
+.black {
+	color: #000;
+}
+
+.slideLeftToRight.ng-hide {
+	margin-right: 100%;
+}
+
+.slideLeftToRight.ng-hide-remove,
+.slideLeftToRight.ng-hide-add,
+.slideRightToLeft.ng-hide-remove,
+.slideRightToLeft.ng-hide-add {
+  display: block !important;
+}
+
+.slideLeftToRight.ng-hide-remove, .slideRightToLeft.ng-hide-remove  {
+  transition: all linear 0.5s;
+}
+
+.slideRightToLeft.ng-hide {
+	margin-left: 100%;
+}
+
+.fadeIn.ng-hide {
+  opacity: 0;
+}
+
+.fadeIn.ng-hide-remove,
+.fadeIn.ng-hide-add {
+  display: block !important;
+}
+
+.fadeIn.ng-hide-remove {
+  transition: all linear 1s;
+}
+
+.review {
+	opacity: 1;
+}
+
+.review.ng-enter {
+    -webkit-transition: all linear 1s;
+    transition: all linear 1s;
+    opacity: 0;
+}
+.review.ng-enter-active {
+    opacity: 1;
+}
