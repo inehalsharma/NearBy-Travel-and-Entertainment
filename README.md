@@ -43,7 +43,7 @@ Implemented by LocalStorage, save your stared places on browser
 
 ***
 
-Android App Version
+Mobile App Version
 
 GIF demo:
 
