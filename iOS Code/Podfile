@@ -1,0 +1,30 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'HW9' do
+  # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
+  use_frameworks!
+  
+  pod 'Alamofire'
+  pod 'AlamofireSwiftyJSON'
+  pod 'McPicker'
+  pod 'GooglePlaces'
+  pod 'GooglePlacePicker'
+  pod 'GoogleMaps'
+  pod 'EasyToast'
+  pod 'SwiftSpinner'
+  pod 'Cosmos'
+
+  # Pods for HW9
+
+  target 'HW9Tests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'HW9UITests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end
